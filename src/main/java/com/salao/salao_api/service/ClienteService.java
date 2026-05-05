@@ -1,64 +1,82 @@
 package com.salao.salao_api.service;
 
+import com.salao.salao_api.dto.cliente.ClienteRequestDTO;
+import com.salao.salao_api.dto.cliente.ClienteResponseDTO;
 import com.salao.salao_api.exception.RecursoNaoEncontradoException;
 import com.salao.salao_api.exception.RegraDeNegocioException;
 import com.salao.salao_api.model.Cliente;
 import com.salao.salao_api.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Service                    // marca como componente de serviço do Spring
-@RequiredArgsConstructor    // Lombok gera construtor com os campos final (injeção de dependência)
+@Service
+@RequiredArgsConstructor
 public class ClienteService {
 
-    @Autowired
     private final ClienteRepository clienteRepository;
-    //           ↑ o Spring injeta automaticamente — isso é Injeção de Dependência
 
-    // Lista todos os clientes
-    public List<Cliente> listarTodos() {
-        return clienteRepository.findAll();
+    public List<ClienteResponseDTO> listarTodos() {
+        return clienteRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)  // converte cada Cliente em ClienteResponseDTO
+                .toList();
     }
 
-    // Busca um cliente pelo ID — lança exceção se não encontrar
-    public Cliente buscarPorId(Long id) {
-        return clienteRepository.findById(id)
+    public ClienteResponseDTO buscarPorId(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Cliente não encontrado com id: " + id
                 ));
+        return toResponseDTO(cliente);
     }
 
-    // Cria um novo cliente
-    public Cliente criar(Cliente cliente) {
-        // Regra de negócio: não pode cadastrar e-mail duplicado
-        if (clienteRepository.findByEmail(cliente.getEmail()).isPresent()) {
+    public ClienteResponseDTO criar(ClienteRequestDTO dto) {
+        if (clienteRepository.findByEmail(dto.email()).isPresent()) {
             throw new RegraDeNegocioException(
-                    "Já existe um cliente com o e-mail: " + cliente.getEmail()
+                    "Já existe um cliente com o e-mail: " + dto.email()
             );
         }
-        return clienteRepository.save(cliente);
+
+        Cliente cliente = new Cliente();
+        cliente.setNome(dto.nome());
+        cliente.setEmail(dto.email());
+        cliente.setTelefone(dto.telefone());
+
+        return toResponseDTO(clienteRepository.save(cliente));
     }
 
-    // Atualiza um cliente existente
-    public Cliente atualizar(Long id, Cliente clienteAtualizado) {
-        // Primeiro verifica se existe (lança exceção se não existir)
-        Cliente clienteExistente = buscarPorId(id);
+    public ClienteResponseDTO atualizar(Long id, ClienteRequestDTO dto) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Cliente não encontrado com id: " + id
+                ));
 
-        // Atualiza apenas os campos permitidos
-        clienteExistente.setNome(clienteAtualizado.getNome());
-        clienteExistente.setTelefone(clienteAtualizado.getTelefone());
-        clienteExistente.setEmail(clienteAtualizado.getEmail());
+        cliente.setNome(dto.nome());
+        cliente.setEmail(dto.email());
+        cliente.setTelefone(dto.telefone());
 
-        return clienteRepository.save(clienteExistente);
-        // save() com ID existente faz UPDATE, sem ID faz INSERT
+        return toResponseDTO(clienteRepository.save(cliente));
     }
 
-    // Deleta um cliente
     public void deletar(Long id) {
-        // Verifica se existe antes de deletar
-        buscarPorId(id);
+        if (!clienteRepository.existsById(id)) {
+            throw new RecursoNaoEncontradoException(
+                    "Cliente não encontrado com id: " + id
+            );
+        }
         clienteRepository.deleteById(id);
+    }
+
+    // Método privado — converte entidade Cliente em ClienteResponseDTO
+    // "private" porque só o próprio service precisa usar
+    private ClienteResponseDTO toResponseDTO(Cliente cliente) {
+        return new ClienteResponseDTO(
+                cliente.getId(),
+                cliente.getNome(),
+                cliente.getEmail(),
+                cliente.getTelefone(),
+                cliente.getDataCadastro()
+        );
     }
 }
