@@ -12,6 +12,9 @@ public interface ServicoRepository extends JpaRepository<Servico, Long> {
     // Busca serviços por nome (ignora maiúsculas/minúsculas)
     List<Servico> findByNomeContainingIgnoreCase(String nome);
 
+    //Procura se existe um serviço passando o nome do serviço
+    Boolean existsByNome(String nome);
+
     // Busca serviços até um preço máximo — útil para filtros
     List<Servico> findByPrecoLessThanEqual(BigDecimal precoMaximo);
 }
