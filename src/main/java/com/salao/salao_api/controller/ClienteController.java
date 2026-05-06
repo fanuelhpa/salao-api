@@ -3,6 +3,7 @@ package com.salao.salao_api.controller;
 import com.salao.salao_api.dto.cliente.ClienteRequestDTO;
 import com.salao.salao_api.dto.cliente.ClienteResponseDTO;
 import com.salao.salao_api.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +30,12 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteResponseDTO> criar(@RequestBody ClienteRequestDTO dto) {
+    public ResponseEntity<ClienteResponseDTO> criar(@Valid @RequestBody ClienteRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criar(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id, @RequestBody ClienteRequestDTO dto) {
+    public ResponseEntity<ClienteResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteRequestDTO dto) {
         return ResponseEntity.ok(clienteService.atualizar(id, dto));
     }
 

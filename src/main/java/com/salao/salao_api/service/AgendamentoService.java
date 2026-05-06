@@ -56,14 +56,7 @@ public class AgendamentoService {
                         "Serviço não encontrado com id: " + dto.servicoId()
                 ));
 
-        // 2. Regra: não pode agendar no passado
-        if (dto.dataHora().isBefore(LocalDateTime.now())) {
-            throw new RegraDeNegocioException(
-                    "Não é possível agendar em uma data passada."
-            );
-        }
-
-        // 3. Regra: verifica conflito de horário
+        // 2. Regra: verifica conflito de horário
         LocalDateTime fimDoNovoServico = dto.dataHora().plusMinutes(servico.getDuracaoMinutos());
 
         List<Agendamento> agendadosEConcluidos = agendamentoRepository.findByStatusNot(StatusAgendamento.CANCELADO);
@@ -83,7 +76,7 @@ public class AgendamentoService {
             }
         }
 
-        // 4. Tudo ok — cria e salva
+        // 3. Tudo ok — cria e salva
         Agendamento agendamento = new Agendamento();
         agendamento.setCliente(cliente);
         agendamento.setServico(servico);

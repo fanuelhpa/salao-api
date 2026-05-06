@@ -3,6 +3,7 @@ package com.salao.salao_api.controller;
 import com.salao.salao_api.dto.agendamento.AgendamentoRequestDTO;
 import com.salao.salao_api.dto.agendamento.AgendamentoResponseDTO;
 import com.salao.salao_api.service.AgendamentoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class AgendamentoController {
     }
 
     @PostMapping
-    public ResponseEntity<AgendamentoResponseDTO> criar(@RequestBody AgendamentoRequestDTO dto) {
+    public ResponseEntity<AgendamentoResponseDTO> criar(@Valid @RequestBody AgendamentoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(agendamentoService.criar(dto));
     }
 

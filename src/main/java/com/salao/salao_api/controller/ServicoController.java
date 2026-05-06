@@ -3,6 +3,7 @@ package com.salao.salao_api.controller;
 import com.salao.salao_api.dto.servico.ServicoRequestDTO;
 import com.salao.salao_api.dto.servico.ServicoResponseDTO;
 import com.salao.salao_api.service.ServicoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +30,12 @@ public class ServicoController {
     }
 
     @PostMapping
-    public ResponseEntity<ServicoResponseDTO> criar(@RequestBody ServicoRequestDTO dto) {
+    public ResponseEntity<ServicoResponseDTO> criar(@Valid @RequestBody ServicoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(servicoService.criar(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ServicoResponseDTO> atualizar(@PathVariable Long id, @RequestBody ServicoRequestDTO dto) {
+    public ResponseEntity<ServicoResponseDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ServicoRequestDTO dto) {
         return ResponseEntity.ok(servicoService.atualizar(id, dto));
     }
 

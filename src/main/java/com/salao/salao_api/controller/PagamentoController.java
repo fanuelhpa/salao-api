@@ -3,6 +3,7 @@ package com.salao.salao_api.controller;
 import com.salao.salao_api.dto.pagamento.PagamentoRequestDTO;
 import com.salao.salao_api.dto.pagamento.PagamentoResponseDTO;
 import com.salao.salao_api.service.PagamentoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class PagamentoController {
     }
 
     @PostMapping
-    public ResponseEntity<PagamentoResponseDTO> registrar(@RequestBody PagamentoRequestDTO dto) {
+    public ResponseEntity<PagamentoResponseDTO> registrar(@Valid @RequestBody PagamentoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(pagamentoService.registrar(dto));
     }
 }
