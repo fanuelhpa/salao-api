@@ -66,9 +66,9 @@ public class AgendamentoService {
         // 3. Regra: verifica conflito de horário
         LocalDateTime fimDoNovoServico = dto.dataHora().plusMinutes(servico.getDuracaoMinutos());
 
-        List<Agendamento> agendados = agendamentoRepository.findByStatus(StatusAgendamento.AGENDADO);
+        List<Agendamento> agendadosEConcluidos = agendamentoRepository.findByStatusNot(StatusAgendamento.CANCELADO);
 
-        for (Agendamento agendado : agendados) {
+        for (Agendamento agendado : agendadosEConcluidos) {
             LocalDateTime fimDoAgendado = agendado.getDataHora()
                     .plusMinutes(agendado.getServico().getDuracaoMinutos());
 
@@ -78,7 +78,7 @@ public class AgendamentoService {
 
             if (haConflito) {
                 throw new RegraDeNegocioException(
-                        "Já existe um agendamento nesse horário. Escolha outro horário."
+                        "Já existe um agendamento nesse horário ou um agendamento já concluído. Escolha outro horário."
                 );
             }
         }

@@ -34,6 +34,9 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
     // Verifica se existe algum cliente vinculado a um serviço
     boolean existsByClienteId(Long clienteId);
 
+    // Busca agendamentos que não foram cancelados
+    List<Agendamento> findByStatusNot(StatusAgendamento status);
+
     // Query JPQL personalizada — conta agendamentos concluídos num período
     // JPQL usa o nome da CLASSE Java (Agendamento), não o nome da tabela SQL
     @Query("SELECT COUNT(a) FROM Agendamento a " +
