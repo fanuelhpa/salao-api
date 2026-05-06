@@ -5,8 +5,10 @@ import com.salao.salao_api.dto.servico.ServicoResponseDTO;
 import com.salao.salao_api.exception.RecursoNaoEncontradoException;
 import com.salao.salao_api.exception.RegraDeNegocioException;
 import com.salao.salao_api.model.Servico;
+import com.salao.salao_api.repository.AgendamentoRepository;
 import com.salao.salao_api.repository.ServicoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -15,6 +17,9 @@ import java.util.List;
 public class ServicoService {
 
     private final ServicoRepository servicoRepository;
+
+    @Autowired
+    private final AgendamentoRepository agendamentoRepository;
 
     public List<ServicoResponseDTO> listarTodos() {
         return servicoRepository.findAll()
@@ -55,7 +60,14 @@ public class ServicoService {
     }
 
     public void deletar(Long id) {
-        buscarServico(id);
+        buscarServico(id); // já lança exceção se não existir
+
+        if (agendamentoRepository.existsByServicoId(id)) {
+            throw new RegraDeNegocioException(
+                    "Não é possível excluir o serviço pois existem agendamentos vinculados a ele."
+            );
+        }
+
         servicoRepository.deleteById(id);
     }
 

@@ -5,6 +5,7 @@ import com.salao.salao_api.dto.cliente.ClienteResponseDTO;
 import com.salao.salao_api.exception.RecursoNaoEncontradoException;
 import com.salao.salao_api.exception.RegraDeNegocioException;
 import com.salao.salao_api.model.Cliente;
+import com.salao.salao_api.repository.AgendamentoRepository;
 import com.salao.salao_api.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final AgendamentoRepository agendamentoRepository;
 
     public List<ClienteResponseDTO> listarTodos() {
         return clienteRepository.findAll()
@@ -65,6 +67,13 @@ public class ClienteService {
                     "Cliente não encontrado com id: " + id
             );
         }
+
+        if (agendamentoRepository.existsByClienteId(id)) {
+            throw new RegraDeNegocioException(
+                    "Não é possível excluir o cliente pois existem agendamentos vinculados a ele."
+            );
+        }
+
         clienteRepository.deleteById(id);
     }
 
