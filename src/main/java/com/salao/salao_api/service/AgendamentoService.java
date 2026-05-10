@@ -87,6 +87,50 @@ public class AgendamentoService {
         return toResponseDTO(agendamentoRepository.save(agendamento));
     }
 
+    public AgendamentoResponseDTO atualizar(Long id, AgendamentoRequestDTO dto) {
+
+        Agendamento agendamento = buscarAgendamento(id);
+
+        if (agendamento.getStatus() != StatusAgendamento.AGENDADO) {
+            throw new RegraDeNegocioException(
+                    "Apenas agendamentos com status AGENDADO podem ser editados."
+            );
+        }
+
+        Servico servico = servicoRepository.findById(dto.servicoId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Servico nao encontrado com id: " + dto.servicoId()
+                ));
+
+        // Verifica conflito de horario ignorando o proprio agendamento
+        LocalDateTime fimDoNovoServico = dto.dataHora().plusMinutes(servico.getDuracaoMinutos());
+
+        List<Agendamento> agendados = agendamentoRepository.findByStatusNot(StatusAgendamento.CANCELADO)
+                .stream()
+                .filter(a -> !a.getId().equals(id)) // ignora o proprio agendamento
+                .toList();
+
+        for (Agendamento agendado : agendados) {
+            LocalDateTime fimDoAgendado = agendado.getDataHora()
+                    .plusMinutes(agendado.getServico().getDuracaoMinutos());
+
+            boolean haConflito =
+                    dto.dataHora().isBefore(fimDoAgendado) &&
+                            fimDoNovoServico.isAfter(agendado.getDataHora());
+
+            if (haConflito) {
+                throw new RegraDeNegocioException(
+                        "Ja existe um agendamento nesse horario. Escolha outro horario."
+                );
+            }
+        }
+
+        agendamento.setServico(servico);
+        agendamento.setDataHora(dto.dataHora());
+
+        return toResponseDTO(agendamentoRepository.save(agendamento));
+    }
+
     public AgendamentoResponseDTO cancelar(Long id) {
         Agendamento agendamento = buscarAgendamento(id);
 
