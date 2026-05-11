@@ -160,7 +160,9 @@ public class AgendamentoService {
         // Só permite concluir após o término do serviço
         if (LocalDateTime.now().isBefore(fimDoServico)) {
             throw new RegraDeNegocioException(
-                    "Este agendamento só pode ser concluído após o término do serviço, às "
+                    "Este agendamento só pode ser concluído após o término do serviço, em "
+                            + fimDoServico.toLocalDate().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                            + " às "
                             + fimDoServico.toLocalTime().toString().substring(0, 5) + "."
             );
         }
