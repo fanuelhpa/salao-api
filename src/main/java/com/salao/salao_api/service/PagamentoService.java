@@ -79,6 +79,13 @@ public class PagamentoService {
                 ));
     }
 
+    public List<PagamentoResponseDTO> buscarPorPeriodo(LocalDateTime inicio, LocalDateTime fim) {
+        return pagamentoRepository.findByDataPagamentoBetween(inicio, fim)
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
     private PagamentoResponseDTO toResponseDTO(Pagamento pagamento) {
         return new PagamentoResponseDTO(
                 pagamento.getId(),

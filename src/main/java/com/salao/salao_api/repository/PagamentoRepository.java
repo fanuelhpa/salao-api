@@ -20,6 +20,8 @@ public interface PagamentoRepository extends JpaRepository<Pagamento, Long> {
     // Pagamentos por método (PIX, DINHEIRO, etc.)
     List<Pagamento> findByMetodoPagamento(MetodoPagamento metodo);
 
+    List<Pagamento> findByDataPagamentoBetween(LocalDateTime inicio, LocalDateTime fim);
+
     // SOMA total de pagamentos num período — coração dos relatórios financeiros!
     @Query("SELECT SUM(p.valor) FROM Pagamento p " +
             "WHERE p.dataPagamento BETWEEN :inicio AND :fim")
