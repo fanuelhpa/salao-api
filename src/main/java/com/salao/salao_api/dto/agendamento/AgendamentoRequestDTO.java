@@ -14,7 +14,7 @@ public record AgendamentoRequestDTO(
         Long servicoId,
 
         @NotNull(message = "A data e hora são obrigatórias.")
-        @Future(message = "A data do agendamento deve ser no futuro.")
+        //@Future(message = "A data do agendamento deve ser no futuro.")
         LocalDateTime dataHora,
         
         String observacoes
