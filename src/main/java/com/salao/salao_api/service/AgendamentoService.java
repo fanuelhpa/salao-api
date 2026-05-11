@@ -153,6 +153,18 @@ public class AgendamentoService {
             );
         }
 
+        // Calcula o horário de término do serviço
+        LocalDateTime fimDoServico = agendamento.getDataHora()
+                .plusMinutes(agendamento.getServico().getDuracaoMinutos());
+
+        // Só permite concluir após o término do serviço
+        if (LocalDateTime.now().isBefore(fimDoServico)) {
+            throw new RegraDeNegocioException(
+                    "Este agendamento só pode ser concluído após o término do serviço, às "
+                            + fimDoServico.toLocalTime().toString().substring(0, 5) + "."
+            );
+        }
+
         agendamento.setStatus(StatusAgendamento.CONCLUIDO);
         return toResponseDTO(agendamentoRepository.save(agendamento));
     }
