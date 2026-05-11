@@ -11,5 +11,6 @@ public record PagamentoResponseDTO(
         String servicoNome,
         BigDecimal valor,
         MetodoPagamento metodoPagamento,
-        LocalDateTime dataPagamento
+        LocalDateTime dataPagamento,
+        LocalDateTime dataServico
 ) {}

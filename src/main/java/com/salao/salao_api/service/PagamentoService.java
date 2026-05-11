@@ -94,7 +94,8 @@ public class PagamentoService {
                 pagamento.getAgendamento().getServico().getNome(),
                 pagamento.getValor(),
                 pagamento.getMetodoPagamento(),
-                pagamento.getDataPagamento()
+                pagamento.getDataPagamento(),
+                pagamento.getAgendamento().getDataHora()
         );
     }
 }
