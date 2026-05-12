@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
         String mensagens = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(erro -> erro.getField() + ": " + erro.getDefaultMessage())
+                .map(erro -> erro.getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
         ErroResponseDTO erro = new ErroResponseDTO(
