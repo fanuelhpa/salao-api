@@ -192,6 +192,7 @@ public class AgendamentoService {
                 agendamento.getCliente().getNome(),
                 agendamento.getServico().getId(),
                 agendamento.getServico().getNome(),
+                agendamento.getServico().getDuracaoMinutos(),
                 agendamento.getDataHora(),
                 agendamento.getStatus(),
                 agendamento.getObservacoes()
