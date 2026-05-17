@@ -14,6 +14,7 @@ import com.salao.salao_api.repository.ServicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -182,6 +183,16 @@ public class AgendamentoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Agendamento não encontrado com id: " + id
                 ));
+    }
+
+    public List<AgendamentoResponseDTO> listarPorData(LocalDate data) {
+        LocalDateTime inicio = data.atStartOfDay();
+        LocalDateTime fim = data.atTime(23, 59, 59);
+        return agendamentoRepository
+                .findByDataHoraBetween(inicio, fim)
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
     // Converte entidade → DTO de resposta
