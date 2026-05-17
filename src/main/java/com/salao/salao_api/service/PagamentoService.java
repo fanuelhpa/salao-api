@@ -67,7 +67,7 @@ public class PagamentoService {
         pagamento.setAgendamento(agendamento);
         pagamento.setValor(dto.valor());
         pagamento.setMetodoPagamento(dto.metodoPagamento());
-        pagamento.setDataPagamento(LocalDateTime.now());
+        pagamento.setDataPagamento(dto.dataPagamento());
 
         return toResponseDTO(pagamentoRepository.save(pagamento));
     }

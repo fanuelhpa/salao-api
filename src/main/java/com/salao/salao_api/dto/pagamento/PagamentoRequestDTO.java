@@ -5,6 +5,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public record PagamentoRequestDTO(
 
@@ -16,5 +17,8 @@ public record PagamentoRequestDTO(
         BigDecimal valor,
 
         @NotNull(message = "O método de pagamento é obrigatório.")
-        MetodoPagamento metodoPagamento
+        MetodoPagamento metodoPagamento,
+
+        @NotNull(message = "A data do pagamento é obrigatória.")
+        LocalDateTime dataPagamento
 ) {}
